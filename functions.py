@@ -31,8 +31,17 @@ def getCSV(path2file, rand=False):
 def getIndeces(line):
     nameIndex = line.index("Name") 
     priceIndex = line.index("Price")
-    bodyIndex = line.index("Body")
-    paintIndex = line.index("Paint")
+    try:
+        bodyIndex = line.index("Body")
+    except:
+        bodyIndex = 3
+        print("Body labor missing or not labeled.")
+    try:
+        paintIndex = line.index("Paint")
+    except:
+        paintIndex = 4
+        print("Paint labor missing or not labeled.")  
+
 
     return nameIndex, priceIndex, bodyIndex, paintIndex
 
