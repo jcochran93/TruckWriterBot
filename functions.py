@@ -10,7 +10,12 @@ import sys
 import os
 import config
 
-# os.chdir(os.path.dirname(sys.argv[0]))
+#default order of file
+nameIndex = 0 
+priceIndex = 1
+bodyIndex = 3
+paintIndex = 4
+
 
 def getCSV(path2file, rand=False):
     csvFile = path2file
@@ -22,6 +27,14 @@ def getCSV(path2file, rand=False):
     
     f.close()
     return lines
+
+def getIndeces(line):
+    nameIndex = line.index("Name") 
+    priceIndex = line.index("Price")
+    bodyIndex = line.index("Body")
+    paintIndex = line.index("Paint")
+
+    return nameIndex, priceIndex, bodyIndex, paintIndex
 
 def isTruckWriterOpen():
 
@@ -66,14 +79,36 @@ def enterPrice(price):
     partPrice = float(price)
     partPrice = "{:.2f}".format(partPrice)
     pyautogui.typewrite(partPrice) #Enter part price
+    pyautogui.hotkey("enter")
+    time.sleep(.2)
+
+def enterBodyLabor(labor):
+    bodyLabor = float(labor)
+    bodyLabor = "{:.1f}".format(bodyLabor)
+    pyautogui.typewrite(bodyLabor) #Enter body hours
+    pyautogui.hotkey("enter")
+    time.sleep(.2)
+
+def enterPaintLabor(labor):
+    paintLabor = float(labor)
+    paintLabor = "{:.1f}".format(paintLabor)
+    pyautogui.typewrite(paintLabor) #Enter paint hours
+    pyautogui.hotkey("enter")
+    time.sleep(.2)
+    pyautogui.hotkey("enter")
+    time.sleep(.2)
+
+def exitWithBody():
+    pyautogui.hotkey("enter")
+    time.sleep(.2)
+    pyautogui.hotkey("enter") 
+    time.sleep(.5)
 
 def defaultSaveAndExit():
 
-    # Save Entry with no Labor
-
     pyautogui.hotkey("enter")
     time.sleep(.2)
-    pyautogui.hotkey("enter") # 2 enters to get to price entry
+    pyautogui.hotkey("enter")
     time.sleep(.2)
     pyautogui.hotkey("enter")
     time.sleep(.2)
@@ -87,18 +122,29 @@ def main(filePath):
 
     lines = getCSV(path2file)
 
+    nameIndex, priceIndex, bodyIndex, paintIndex = getIndeces(lines[0])
+
     location = isTruckWriterOpen()
 
     if(location[1] != 0):
         for x in lines[1:]:
             line = x
+            line = line.strip("\n")
             part = line.split(",")
-            part[2] = part[2].strip('\n')
+            #part[2] = part[2].strip('\n')
 
-            manualEntry(location, part[0])
+            manualEntry(location, part[nameIndex])
             selectOEM()
-            enterPrice(part[1])
-            defaultSaveAndExit()
+            enterPrice(part[priceIndex])
+            if (len(part) == 3 ):
+                defaultSaveAndExit()
+            elif (len(part) == 4 ):
+                enterBodyLabor(part[bodyIndex])
+                exitWithBody()
+            elif (len(part == 5)):
+                enterBodyLabor(part[bodyIndex])
+                enterPaintLabor(part[paintIndex])
+
 
 if __name__ == "__main__":
     
