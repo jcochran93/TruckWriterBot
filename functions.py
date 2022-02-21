@@ -1,17 +1,10 @@
-import imp
-import pyautogui
+import pyautogui 
 import time
-import csv
-import cv2
-import numpy as np
 import random
-from PIL import ImageGrab
-import sys
-import os
 import config
 
 #default order of file
-nameIndex = 0 
+nameIndex = 0
 priceIndex = 1
 bodyIndex = 3
 paintIndex = 4
@@ -29,6 +22,7 @@ def getCSV(path2file, rand=False):
     return lines
 
 def getIndeces(line):
+    line = line.split(",")
     nameIndex = line.index("Name") 
     priceIndex = line.index("Price")
     try:
@@ -140,7 +134,9 @@ def main(filePath):
             line = x
             line = line.strip("\n")
             part = line.split(",")
-            #part[2] = part[2].strip('\n')
+            
+            while( part[-1] == ''):
+                part.remove('')
 
             manualEntry(location, part[nameIndex])
             selectOEM()
@@ -150,7 +146,7 @@ def main(filePath):
             elif (len(part) == 4 ):
                 enterBodyLabor(part[bodyIndex])
                 exitWithBody()
-            elif (len(part == 5)):
+            elif (len(part) == 5 ):
                 enterBodyLabor(part[bodyIndex])
                 enterPaintLabor(part[paintIndex])
 
